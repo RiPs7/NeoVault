@@ -5,6 +5,7 @@ import HomeScreen from "./src/ui/screens/home-screen";
 import LoginScreen from "./src/ui/screens/login-screen";
 import SetupScreen from "./src/ui/screens/setup-screen";
 import SplashScreen from "./src/ui/screens/splash-screen";
+import Toast from "react-native-toast-message";
 
 class App extends Component {
   constructor() {
@@ -14,14 +15,17 @@ class App extends Component {
   render() {
     const Stack = createStackNavigator();
     return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="SetupScreen" component={SetupScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="SetupScreen" component={SetupScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+        <Toast />
+      </>
     );
   }
 }

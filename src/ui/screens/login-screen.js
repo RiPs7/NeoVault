@@ -6,6 +6,7 @@ import { sha256 } from "../../crypto/crypto";
 import { PASSKEY_KEY } from "../../global/constants";
 import Numpad from "../components/numpad";
 import Passcode from "../components/passcode";
+import Toast from "react-native-toast-message";
 
 class LoginScreen extends Component {
   constructor(props) {
@@ -22,6 +23,11 @@ class LoginScreen extends Component {
       if (this.forSetup) {
         AsyncStorage.setItem(PASSKEY_KEY, passkey, (err) => {
           if (!err) {
+            Toast.show({
+              type: 'success',
+              text1: 'Passcode stored securely.',
+              text2: 'Welcome to your Password Manager 👋'
+            });
             this.props.navigation.replace("HomeScreen", { passkey });
           }
         });
