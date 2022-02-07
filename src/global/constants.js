@@ -1,4 +1,7 @@
-export const PASSWORD_HASH = "hasBeenSetup";
+export const SPLASH_SCREEN_DELAY_MS = 3000;
+
+export const PASSKEY_KEY = "passkey";
+export const PASSCODE_LENGTH = 5;
 
 const assetDir = "../../assets/";
 

@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Device from "expo-device";
 import React, { Component, createRef } from "react";
 import { StyleSheet, View } from "react-native";
-import { PASSWORD_HASH } from "../../global/constants";
+import { sha256 } from "../../crypto/crypto";
+import { PASSKEY_KEY } from "../../global/constants";
 import Numpad from "../components/numpad";
 import Passcode from "../components/passcode";
 
@@ -9,19 +11,32 @@ class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.passcode = createRef();
+    // This may have been passed as a parameter,
+    // so that the login screen is used for setup.
     this.forSetup = props.route.params?.forSetup;
   }
 
   handleDigitPressed(digit) {
-    const result = this.passcode.current.addDigit(digit);
-    if (result) {
+    this.passcode.current.addDigit(digit, async (passcode, onError) => {
+      const passkey = sha256(passcode + Device.uniqueId);
       if (this.forSetup) {
-        AsyncStorage.setItem(PASSWORD_HASH, result);
+        AsyncStorage.setItem(PASSKEY_KEY, passkey, (err) => {
+          if (!err) {
+            this.props.navigation.replace("HomeScreen", { passkey });
+          }
+        });
+      } else {
+        AsyncStorage.getItem(PASSKEY_KEY, (err, result) => {
+          if (!err && result) {
+            if (passkey === result) {
+              this.props.navigation.replace("HomeScreen", { passkey });
+            } else {
+              onError();
+            }
+          }
+        });
       }
-      // Replacing LoginScreen with HomeScreen, so that the user
-      // cannot navigate back to it.
-      this.props.navigation.replace("HomeScreen", { passcodeHash: result });
-    }
+    });
   }
 
   handleClearPressed() {

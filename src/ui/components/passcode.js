@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 import { sha256 } from "../../crypto/crypto";
+import { PASSCODE_LENGTH } from "../../global/constants";
 
 class Passcode extends Component {
   constructor(props) {
@@ -9,6 +10,25 @@ class Passcode extends Component {
       passcode: [],
     };
     this.shakeAnimation = new Animated.Value(0);
+  }
+
+  // Adds a digit to the passcode.
+  // If the required length is reached, it calls onSubmit, passing two callbacks
+  // for success and for error.
+  // The consumer is responsible to call onSuccess and onError
+  addDigit(digit, onSubmit) {
+    const curretPasscode = this.state.passcode.concat(digit);
+    this.setState({ passcode: curretPasscode });
+    if (curretPasscode.length == PASSCODE_LENGTH) {
+      onSubmit(curretPasscode.join(""), () => {
+        this.clearDigits();
+        this.shakePasscode();
+      })
+    }
+  }
+
+  clearDigits() {
+    this.setState({ passcode: [] });
   }
 
   shakePasscode() {
@@ -20,36 +40,8 @@ class Passcode extends Component {
     ]).start();
   }
 
-  addDigit(digit) {
-    const newPasscode = this.state.passcode.concat(digit);
-    this.setState({ passcode: newPasscode });
-    if (newPasscode.length == 4) {
-      return this.submitPasscode(newPasscode.join(""));
-    }
-    return null;
-  }
-
-  clearDigits() {
-    this.setState({ passcode: [] });
-  }
-
-  submitPasscode(passcode) {
-    const correctPasscode = "1234";
-    const correctPasscodeHash = sha256(correctPasscode).toString();
-
-    const passcodeHash = sha256(passcode).toString();
-
-    if (passcodeHash === correctPasscodeHash) {
-      return passcodeHash;
-    } else {
-      this.shakePasscode();
-      this.clearDigits();
-      return null;
-    }
-  }
-
   padPasscode(passcode) {
-    return Array.from({ ...passcode, length: 4 });
+    return Array.from({ ...passcode, length: PASSCODE_LENGTH });
   }
 
   render() {

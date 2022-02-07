@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { Component } from "react";
 import { Dimensions, Image, ImageBackground, Text } from "react-native";
-import { IMAGES, PASSWORD_HASH } from "../../global/constants";
+import { IMAGES, PASSKEY_KEY, SPLASH_SCREEN_DELAY_MS } from "../../global/constants";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
@@ -12,13 +12,12 @@ class SplashScreen extends Component {
   }
 
   componentDidMount() {
-    AsyncStorage.getItem(PASSWORD_HASH, (err, result) => {
-      console.log(result);
-        if (!err && result) {
-          setTimeout(() => this.props.navigation.replace("LoginScreen", { forSetup: true }), 3000);
-        } else {
-          setTimeout(() => this.props.navigation.replace("SetupScreen", { forSetup: true }), 3000);
-        }
+    AsyncStorage.getItem(PASSKEY_KEY, (err, result) => {
+      if (!err && result) {
+        setTimeout(() => this.props.navigation.replace("LoginScreen", { forSetup: false }), SPLASH_SCREEN_DELAY_MS);
+      } else {
+        setTimeout(() => this.props.navigation.replace("SetupScreen"), SPLASH_SCREEN_DELAY_MS);
+      }
     });
   }
 
@@ -30,7 +29,7 @@ class SplashScreen extends Component {
         resizeMode="cover"
       >
         <Image style={{ alignSelf: "center", width: 200, height: 200 }} source={IMAGES.passwordManagerIcon} />
-        <Text style={{color: "white", fontSize: 17}}>PASSWORD MANAGER</Text>
+        <Text style={{ color: "white", fontSize: 17 }}>PASSWORD MANAGER</Text>
       </ImageBackground>
     );
   }

@@ -1,9 +1,6 @@
 import React, { Component } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import SlidableList from "../components/slidable-list";
-
-const WIDTH = Dimensions.get("window").width;
-const HEIGHT = Dimensions.get("window").height;
 
 class SetupScreen extends Component {
   constructor(props) {
