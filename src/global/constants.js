@@ -13,5 +13,4 @@ export const IMAGES = {
     masterPasswordIcon: require(`${assetDir}master-password-icon.png`),
     masterPasswordBg: require(`${assetDir}master-password-bg.jpg`),
     logo: require(`${assetDir}logo.png`),
-    logoNoBg: require(`${assetDir}logo-no-bg.png`),
 }

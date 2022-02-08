@@ -28,14 +28,14 @@ class LoginScreen extends Component {
               text1: 'Passcode stored securely.',
               text2: 'Welcome to your Password Manager 👋'
             });
-            this.props.navigation.replace("HomeScreen", { passkey });
+            this.props.navigation.replace("HomeScreen", { passkey: passkey });
           }
         });
       } else {
         AsyncStorage.getItem(PASSKEY_KEY, (err, result) => {
           if (!err && result) {
             if (passkey === result) {
-              this.props.navigation.replace("HomeScreen", { passkey });
+              this.props.navigation.replace("HomeScreen", { passkey: passkey });
             } else {
               onError();
             }

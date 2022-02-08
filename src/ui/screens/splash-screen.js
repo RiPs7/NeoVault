@@ -9,7 +9,6 @@ const HEIGHT = Dimensions.get("window").height;
 class SplashScreen extends Component {
   constructor(props) {
     super(props);
-    AsyncStorage.removeItem(PASSKEY_KEY);
   }
 
   componentDidMount() {
