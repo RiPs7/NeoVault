@@ -6,6 +6,7 @@ import LoginScreen from "./src/ui/screens/login-screen";
 import SetupScreen from "./src/ui/screens/setup-screen";
 import SplashScreen from "./src/ui/screens/splash-screen";
 import Toast from "react-native-toast-message";
+import { StatusBar } from "react-native";
 
 class App extends Component {
   constructor() {
@@ -16,6 +17,7 @@ class App extends Component {
     const Stack = createStackNavigator();
     return (
       <>
+        <StatusBar hidden />
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
