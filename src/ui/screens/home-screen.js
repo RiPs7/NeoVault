@@ -56,7 +56,10 @@ class HomeScreen extends Component {
   componentDidMount() {
     loadAllCredentials((err, res) => {
       if (!err) {
-        this.setState({ credentials: JSON.parse(res) });
+        this.setState((prevState) => ({
+          ...prevState,
+          credentials: res ? JSON.parse(res) : [],
+        }));
       }
     });
   }
@@ -93,12 +96,22 @@ class HomeScreen extends Component {
         <View style={styles.container}>
           <View style={styles.containerInner}>
             <Image source={IMAGES.logo} resizeMode="contain" style={styles.logo} />
-            <FlatList
-              contentContainerStyle={{ paddingBottom: 20 }}
-              data={this.state.credentials}
-              renderItem={({ item }) => this.renderCredentialsCard(item)}
-              keyExtractor={(item) => item.key}
-            />
+            {this.state.credentials.length === 0 ? (
+              <View style={styles.emptyMessageContainer}>
+                <Text style={styles.emptyMessage}>
+                  You have no credentials stored yet.
+                  {"\n\n"}
+                  Press the + icon to store your first credentials securely.
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                contentContainerStyle={{ paddingBottom: 20 }}
+                data={this.state.credentials}
+                renderItem={({ item }) => this.renderCredentialsCard(item)}
+                keyExtractor={(item) => item.key}
+              />
+            )}
           </View>
         </View>
         <TouchableOpacity style={styles.actionButton} onPress={this.toggleModal}>
@@ -199,7 +212,7 @@ const styles = StyleSheet.create({
   },
   containerInner: {
     flex: 1,
-    justifyContent: "space-evenly",
+    justifyContent: "flex-start",
     width: Dimensions.get("window").width,
     marginBottom: 10,
   },
@@ -208,6 +221,17 @@ const styles = StyleSheet.create({
     height: 100,
     alignSelf: "center",
     marginTop: 30,
+  },
+  emptyMessageContainer: {
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+    marginHorizontal: 70,
+  },
+  emptyMessage: {
+    fontSize: 30,
+    color: "#707070A0",
+    textAlign: "center",
   },
   actionButton: {
     width: 50,
