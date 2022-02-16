@@ -13,14 +13,14 @@ class Passcode extends Component {
   }
 
   // Adds a digit to the passcode.
-  // If the required length is reached, it calls onSubmit, passing two callbacks
-  // for success and for error.
-  // The consumer is responsible to call onSuccess and onError
+  // If the required length is reached, it calls onSubmit, 
+  // passing back the current passcode and a callback for error.
+  // The consumer is responsible to invoke the error callback.
   addDigit(digit, onSubmit) {
-    const curretPasscode = this.state.passcode.concat(digit);
-    this.setState({ passcode: curretPasscode });
-    if (curretPasscode.length == PASSCODE_LENGTH) {
-      onSubmit(curretPasscode.join(""), () => {
+    const currentPasscode = this.state.passcode.concat(digit);
+    this.setState({ passcode: currentPasscode });
+    if (currentPasscode.length == PASSCODE_LENGTH) {
+      onSubmit(currentPasscode.join(""), () => {
         this.clearDigits();
         this.shakePasscode();
       })

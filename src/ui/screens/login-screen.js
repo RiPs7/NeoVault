@@ -1,12 +1,11 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
 import React, { Component, createRef } from "react";
 import { StyleSheet, View } from "react-native";
+import Toast from "react-native-toast-message";
 import { sha256 } from "../../crypto/crypto";
-import { PASSKEY_KEY } from "../../global/constants";
+import { loadPasskey, storePasskey } from "../../database/database-helper";
 import Numpad from "../components/numpad";
 import Passcode from "../components/passcode";
-import Toast from "react-native-toast-message";
 
 class LoginScreen extends Component {
   constructor(props) {
@@ -18,23 +17,28 @@ class LoginScreen extends Component {
   }
 
   handleDigitPressed(digit) {
-    this.passcode.current.addDigit(digit, async (passcode, onError) => {
+    this.passcode.current.addDigit(digit, (passcode, onError) => {
       const passkey = sha256(passcode + Device.uniqueId);
       if (this.forSetup) {
-        AsyncStorage.setItem(PASSKEY_KEY, passkey, (err) => {
+        storePasskey((err) => {
           if (!err) {
             Toast.show({
-              type: 'success',
-              text1: 'Passcode stored securely.',
-              text2: 'Welcome to your Password Manager 👋'
+              type: "success",
+              text1: "Passcode stored securely.",
+              text2: "Welcome to your Password Manager 👋",
             });
             this.props.navigation.replace("HomeScreen", { passkey: passkey });
           }
         });
       } else {
-        AsyncStorage.getItem(PASSKEY_KEY, (err, result) => {
-          if (!err && result) {
-            if (passkey === result) {
+        loadPasskey((err, res) => {
+          if (!err && res) {
+            if (passkey === res) {
+              Toast.show({
+                type: "success",
+                text1: "Logged in successfully",
+                visibilityTime: 1500
+              });
               this.props.navigation.replace("HomeScreen", { passkey: passkey });
             } else {
               onError();

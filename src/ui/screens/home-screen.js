@@ -1,86 +1,84 @@
 import React, { Component } from "react";
-import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import { Card, Icon } from "react-native-elements";
-import { decrypt } from "../../crypto/crypto";
+import {
+  Button,
+  Dimensions,
+  FlatList,
+  Image,
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Icon } from "react-native-elements";
+import { encrypt } from "../../crypto/crypto";
+import { loadAllCredentials, storeCredentials } from "../../database/database-helper";
 import { IMAGES } from "../../global/constants";
+import Toast from "react-native-toast-message";
+import CredentialsCard from "../components/credentials-card";
+import { Formik } from "formik";
+import * as yup from "yup";
+
+const addCredentialsSchema = yup.object({
+  domain: yup
+    .string()
+    .required("Domain / Account name is required.")
+    .min(2, "This is not a valid domain / account name."),
+  username: yup.string().required("Username is required."),
+  password: yup.string().required("Password is required."),
+});
 
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
-    this.passkey = props.route.params.passkey;
-    this.decryptAndRender = this.decryptAndRender.bind(this);
 
-    // Mock a scenario (overwrite the saved passkey just for the mocked scenario)
-    this.passkey = "6d9aef76689a393eb013eed714cc42c702b3c61752751a61924852e767d660b4";
-    // This should be eventually loaded from a DB or something.
+    // The passkey is passed as a router
+    // parameter to be used in the main app
+    this.passkey = props.route.params?.passkey;
+
+    // Bind 'this' to the required functions
+    this.renderCredentialsCard = this.renderCredentialsCard.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
+
+    // The component state:
+    // 1) The list of credentials to display
+    // 2) The visibility state of the modal
     this.state = {
-      credentials: [
-        {
-          key: 0,
-          domain: "Google",
-          username: "oPidyB0EAUJC8q6b9kdWVw==",
-          password: "fVHKlx9Z+T4wp5324hNv2g==",
-          isUsernameInvisible: true,
-          isPasswordInvisible: true,
-        },
-        {
-          key: 1,
-          domain: "Microsoft",
-          username: "UBxeVH0zYkK6m/WBcONDhQ==",
-          password: "ukuDEaW4Vq43qU0nx+hvsw==",
-          isUsernameInvisible: true,
-          isPasswordInvisible: true,
-        },
-        {
-          key: 2,
-          domain: "Facebook",
-          username: "mGkOtqlMtl6FXfFX6C9omg==",
-          password: "VA7Iv+z2fudu4Xmr0Ro3WA==",
-          isUsernameInvisible: true,
-          isPasswordInvisible: true,
-        },
-      ],
+      credentials: [],
+      modalVisible: false,
     };
   }
 
-  toggleCredentials(key, prop) {
-    this.setState((prevState) => {
-      const newCredentials = prevState.credentials.map((cred) => {
-        if (cred.key === key) {
-          if (prop === "username") {
-            cred.isUsernameInvisible = !cred.isUsernameInvisible;
-          } else if (prop === "password") {
-            cred.isPasswordInvisible = !cred.isPasswordInvisible;
-          }
-        }
-        return cred;
-      });
-      return { credentials: newCredentials };
+  // After the component mounts, we load all the
+  // credentials and store them in the component state
+  componentDidMount() {
+    loadAllCredentials((err, res) => {
+      if (!err) {
+        this.setState({ credentials: JSON.parse(res) });
+      }
     });
   }
 
-  decryptAndRender({ item }) {
-    const { key, domain, username, password, isUsernameInvisible, isPasswordInvisible } = item;
-    const invisibleUsername = new Array(10).fill("*").join("");
-    const invisiblePassword = new Array(10).fill("*").join("");
-    return (
-      <Card containerStyle={styles.cardContainer}>
-        <Card.Title>{domain}</Card.Title>
-        <Card.Divider color="#605BDD" />
-        <View style={styles.row}>
-          <Text style={isUsernameInvisible ? styles.invisibleText : styles.visibleText}>
-            {isUsernameInvisible ? invisibleUsername : decrypt(username, this.passkey)}
-          </Text>
-          <Icon name="eye" type="ionicon" onPress={() => this.toggleCredentials(key, "username")} />
-        </View>
-        <View style={styles.row}>
-          <Text style={isPasswordInvisible ? styles.invisibleText : styles.visibleText}>
-            {isPasswordInvisible ? invisiblePassword : decrypt(password, this.passkey)}
-          </Text>
-          <Icon name="eye" type="ionicon" onPress={() => this.toggleCredentials(key, "password")} />
-        </View>
-      </Card>
-    );
+  addCredentials({ domain, username, password }) {
+    storeCredentials(domain, encrypt(username, this.passkey), encrypt(password, this.passkey), (err, res) => {
+      if (!err) {
+        Toast.show({
+          type: "success",
+          text1: "Credentials stored securely.",
+        });
+        loadAllCredentials((err2, res2) => {
+          if (!err2) {
+            this.setState({ credentials: JSON.parse(res2) });
+          }
+        });
+      }
+    });
+  }
+
+  renderCredentialsCard({ domain, username, password }) {
+    return <CredentialsCard domain={domain} username={username} password={password} passkey={this.passkey} />;
   }
 
   render() {
@@ -90,13 +88,96 @@ class HomeScreen extends Component {
           <View style={styles.containerInner}>
             <Image source={IMAGES.logo} resizeMode="contain" style={styles.logo} />
             <FlatList
+              contentContainerStyle={{ paddingBottom: 20 }}
               data={this.state.credentials}
-              renderItem={this.decryptAndRender}
+              renderItem={({ item }) => this.renderCredentialsCard(item)}
               keyExtractor={(item) => item.key}
             />
           </View>
         </View>
+        <TouchableOpacity style={styles.actionButton} onPress={this.toggleModal}>
+          <Icon name="plus" type="font-awesome-5" color="white" />
+        </TouchableOpacity>
+        {this.renderModal()}
       </SafeAreaView>
+    );
+  }
+
+  // Modal
+
+  toggleModal() {
+    this.setState((prevState) => ({
+      ...prevState,
+      modalVisible: !prevState.modalVisible,
+    }));
+  }
+
+  renderModal() {
+    return (
+      <Modal animationType="slide" transparent={true} visible={this.state.modalVisible}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalTitleContainer}>
+            <TouchableOpacity style={styles.modalBackButton} onPress={this.toggleModal}>
+              <Text>
+                <Icon name="arrow-back" type="ionicon" />
+              </Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Add Credentials</Text>
+          </View>
+          <View style={styles.modalInnerContainer}>
+            <Formik
+              initialValues={{
+                domain: "",
+                username: "",
+                password: "",
+              }}
+              validationSchema={addCredentialsSchema}
+              onSubmit={(values) => {
+                this.addCredentials(values);
+                this.toggleModal();
+              }}
+            >
+              {({ handleChange, handleBlur, handleSubmit, touched, errors, values }) => (
+                <View style={styles.modalTextInputArea}>
+                  <View style={styles.modalInput}>
+                    <TextInput
+                      style={styles.modalTextInput}
+                      placeholder="Domain / Account name"
+                      onChangeText={handleChange("domain")}
+                      onBlur={handleBlur("domain")}
+                      value={values.domain}
+                    />
+                    <Text style={styles.errorText}>{touched.domain && errors.domain}</Text>
+                  </View>
+                  <View style={styles.modalInput}>
+                    <TextInput
+                      style={styles.modalTextInput}
+                      placeholder="Username"
+                      onChangeText={handleChange("username")}
+                      onBlur={handleBlur("username")}
+                      value={values.username}
+                    />
+                    <Text style={styles.errorText}>{touched.username && errors.username}</Text>
+                  </View>
+                  <View style={styles.modalInput}>
+                    <TextInput
+                      style={styles.modalTextInput}
+                      placeholder="Password"
+                      onChangeText={handleChange("password")}
+                      onBlur={handleBlur("password")}
+                      value={values.password}
+                    />
+                    <Text style={styles.errorText}>{touched.password && errors.password}</Text>
+                  </View>
+                  <View style={styles.modalAddButtonArea}>
+                    <Button title="Add" onPress={handleSubmit} />
+                  </View>
+                </View>
+              )}
+            </Formik>
+          </View>
+        </View>
+      </Modal>
     );
   }
 }
@@ -104,7 +185,7 @@ class HomeScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -112,6 +193,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-evenly",
     width: Dimensions.get("window").width,
+    marginBottom: 10,
   },
   logo: {
     width: 100,
@@ -119,26 +201,59 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 30,
   },
-  cardContainer: {
-    flex: 1,
-    margin: 30,
-    elevation: 0,
-    borderRadius: 20,
-    borderColor: "#605BDD",
-    borderStyle: "dashed",
+  actionButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    elevation: 20,
+    backgroundColor: "#605BDD",
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  row: {
+  modalContainer: {
+    backgroundColor: "white",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+  },
+  modalTitleContainer: {
+    backgroundColor: "#EFEFEF",
+    height: 50,
+    elevation: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
-  visibleText: {
-    color: "#202020",
+  modalBackButton: {
+    marginLeft: 10,
+  },
+  modalTitle: {
+    marginLeft: 10,
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 18,
   },
-  invisibleText: {
-    color: "lightgrey",
-    fontSize: 16,
+  modalInnerContainer: {
+    flex: 1,
+    padding: 50,
+  },
+  modalTextInputArea: {
+    flex: 1,
+  },
+  modalInput: {
+    marginBottom: 50,
+  },
+  modalTextInput: {
+    borderBottomColor: "grey",
+    borderBottomWidth: 1,
+  },
+  modalAddButtonArea: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  errorText: {
+    color: "#F05050",
   },
 });
 
