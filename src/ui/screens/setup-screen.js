@@ -10,7 +10,7 @@ class SetupScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <SlidableList onFinish={() => this.props.navigation.replace("LoginScreen", { forSetup: true })}/>
+        <SlidableList onFinish={() => this.props.navigation.replace("LoginScreen", { forSetup: true })} />
       </View>
     );
   }

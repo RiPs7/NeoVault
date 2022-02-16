@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { Component } from "react";
 import { Dimensions, Image, ImageBackground, Text } from "react-native";
-import { prepareMockCredentials } from "../../database/database-helper";
 import { IMAGES, PASSKEY_KEY, SPLASH_SCREEN_DELAY_MS } from "../../global/constants";
 
 const WIDTH = Dimensions.get("window").width;
@@ -10,7 +9,8 @@ const HEIGHT = Dimensions.get("window").height;
 class SplashScreen extends Component {
   constructor(props) {
     super(props);
-    prepareMockCredentials();
+    // Uncomment the line below to clear all the setup and start from scratch
+    // AsyncStorage.clear();
   }
 
   componentDidMount() {
@@ -21,7 +21,7 @@ class SplashScreen extends Component {
         setTimeout(() => this.props.navigation.replace("SetupScreen"), SPLASH_SCREEN_DELAY_MS);
       }
     });
-  }X
+  }
 
   render() {
     return (

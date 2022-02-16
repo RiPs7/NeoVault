@@ -1,3 +1,4 @@
+import { Formik } from "formik";
 import React, { Component } from "react";
 import {
   Button,
@@ -10,16 +11,15 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { Icon } from "react-native-elements";
+import Toast from "react-native-toast-message";
+import * as yup from "yup";
 import { encrypt } from "../../crypto/crypto";
 import { loadAllCredentials, storeCredentials } from "../../database/database-helper";
 import { IMAGES } from "../../global/constants";
-import Toast from "react-native-toast-message";
 import CredentialsCard from "../components/credentials-card";
-import { Formik } from "formik";
-import * as yup from "yup";
 
 const addCredentialsSchema = yup.object({
   domain: yup
@@ -61,6 +61,9 @@ class HomeScreen extends Component {
     });
   }
 
+  // Adds the supplied credentials to the local storage,
+  // shows a success toast message and reloads all the
+  // credentials.
   addCredentials({ domain, username, password }) {
     storeCredentials(domain, encrypt(username, this.passkey), encrypt(password, this.passkey), (err, res) => {
       if (!err) {
@@ -77,10 +80,13 @@ class HomeScreen extends Component {
     });
   }
 
+  // Renders a set of credentials as
+  // an individual credentials card
   renderCredentialsCard({ domain, username, password }) {
     return <CredentialsCard domain={domain} username={username} password={password} passkey={this.passkey} />;
   }
 
+  // Renders the main view
   render() {
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -105,6 +111,7 @@ class HomeScreen extends Component {
 
   // Modal
 
+  // Toggles the modal visibility
   toggleModal() {
     this.setState((prevState) => ({
       ...prevState,
@@ -112,6 +119,7 @@ class HomeScreen extends Component {
     }));
   }
 
+  // Renders the modal view
   renderModal() {
     return (
       <Modal animationType="slide" transparent={true} visible={this.state.modalVisible}>

@@ -20,7 +20,7 @@ class LoginScreen extends Component {
     this.passcode.current.addDigit(digit, (passcode, onError) => {
       const passkey = sha256(passcode + Device.uniqueId);
       if (this.forSetup) {
-        storePasskey((err) => {
+        storePasskey(passkey, (err) => {
           if (!err) {
             Toast.show({
               type: "success",
