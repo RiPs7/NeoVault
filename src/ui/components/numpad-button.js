@@ -30,7 +30,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "dodgerblue",
     textAlign: "center",
-    textAlignVertical: "center",
+    ...Platform.select({
+      ios: {
+        lineHeight: 75
+      },
+      android: {
+        textAlignVertical: "center"
+      },
+    }),
   },
 });
 
