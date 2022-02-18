@@ -5,21 +5,26 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Keyboard,
   Modal,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import Toast from "react-native-toast-message";
+import { AdMobBanner, setTestDeviceIDAsync } from "expo-ads-admob";
 import * as yup from "yup";
 import { encrypt } from "../../crypto/crypto";
 import { loadAllCredentials, storeCredentials } from "../../database/database-helper";
-import { IMAGES } from "../../global/constants";
+import { ADMOB, IMAGES } from "../../global/constants";
 import CredentialsCard from "../components/credentials-card";
+import * as Device from "expo-device";
 
 const addCredentialsSchema = yup.object({
   domain: yup
@@ -49,6 +54,14 @@ class HomeScreen extends Component {
       credentials: [],
       modalVisible: false,
     };
+
+    setTestDeviceIDAsync("EMULATOR");
+
+    // The banner ID based on the Platform
+    const testID = Platform.OS === "ios" ? ADMOB.iosTestBannerId : ADMOB.androidTestBannerId;
+    const productionID = Platform.OS === "ios" ? ADMOB.iosBannerId : ADMOB.androidBannerId;
+    const isDevEnvironment = !Device.isDevice || __DEV__;
+    this.bannerId = isDevEnvironment ? testID : productionID;
   }
 
   // After the component mounts, we load all the
@@ -117,6 +130,13 @@ class HomeScreen extends Component {
         <TouchableOpacity style={styles.actionButton} onPress={this.toggleModal}>
           <Icon name="plus" type="font-awesome-5" color="white" />
         </TouchableOpacity>
+        <View style={styles.adBannerContainer}>
+          <AdMobBanner
+            bannerSize="banner"
+            adUnitID={this.bannerId}
+            servePersonalizedAds={false}
+          />
+        </View>
         {this.renderModal()}
       </SafeAreaView>
     );
@@ -136,68 +156,72 @@ class HomeScreen extends Component {
   renderModal() {
     return (
       <Modal animationType="slide" transparent={true} visible={this.state.modalVisible}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalTitleContainer}>
-            <TouchableOpacity style={styles.modalBackButton} onPress={this.toggleModal}>
-              <Text>
-                <Icon name="arrow-back" type="ionicon" />
-              </Text>
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>Add Credentials</Text>
-          </View>
-          <View style={styles.modalInnerContainer}>
-            <Formik
-              initialValues={{
-                domain: "",
-                username: "",
-                password: "",
-              }}
-              validationSchema={addCredentialsSchema}
-              onSubmit={(values) => {
-                this.addCredentials(values);
-                this.toggleModal();
-              }}
-            >
-              {({ handleChange, handleBlur, handleSubmit, touched, errors, values }) => (
-                <View style={styles.modalTextInputArea}>
-                  <View style={styles.modalInput}>
-                    <TextInput
-                      style={styles.modalTextInput}
-                      placeholder="Domain / Account name"
-                      onChangeText={handleChange("domain")}
-                      onBlur={handleBlur("domain")}
-                      value={values.domain}
-                    />
-                    <Text style={styles.errorText}>{touched.domain && errors.domain}</Text>
-                  </View>
-                  <View style={styles.modalInput}>
-                    <TextInput
-                      style={styles.modalTextInput}
-                      placeholder="Username"
-                      onChangeText={handleChange("username")}
-                      onBlur={handleBlur("username")}
-                      value={values.username}
-                    />
-                    <Text style={styles.errorText}>{touched.username && errors.username}</Text>
-                  </View>
-                  <View style={styles.modalInput}>
-                    <TextInput
-                      style={styles.modalTextInput}
-                      placeholder="Password"
-                      onChangeText={handleChange("password")}
-                      onBlur={handleBlur("password")}
-                      value={values.password}
-                    />
-                    <Text style={styles.errorText}>{touched.password && errors.password}</Text>
-                  </View>
-                  <View style={styles.modalAddButtonArea}>
-                    <Button title="Add" onPress={handleSubmit} />
-                  </View>
-                </View>
-              )}
-            </Formik>
-          </View>
-        </View>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalTitleContainer}>
+                <TouchableOpacity style={styles.modalBackButton} onPress={this.toggleModal}>
+                  <Text>
+                    <Icon name="arrow-back" type="ionicon" />
+                  </Text>
+                </TouchableOpacity>
+                <Text style={styles.modalTitle}>Add Credentials</Text>
+              </View>
+              <View style={styles.modalInnerContainer}>
+                <Formik
+                  initialValues={{
+                    domain: "",
+                    username: "",
+                    password: "",
+                  }}
+                  validationSchema={addCredentialsSchema}
+                  onSubmit={(values) => {
+                    this.addCredentials(values);
+                    this.toggleModal();
+                  }}
+                >
+                  {({ handleChange, handleBlur, handleSubmit, touched, errors, values }) => (
+                    <View style={styles.modalTextInputArea}>
+                      <View style={styles.modalInput}>
+                        <TextInput
+                          style={styles.modalTextInput}
+                          placeholder="Domain / Account name"
+                          onChangeText={handleChange("domain")}
+                          onBlur={handleBlur("domain")}
+                          value={values.domain}
+                        />
+                        <Text style={styles.errorText}>{touched.domain && errors.domain}</Text>
+                      </View>
+                      <View style={styles.modalInput}>
+                        <TextInput
+                          style={styles.modalTextInput}
+                          placeholder="Username"
+                          onChangeText={handleChange("username")}
+                          onBlur={handleBlur("username")}
+                          value={values.username}
+                        />
+                        <Text style={styles.errorText}>{touched.username && errors.username}</Text>
+                      </View>
+                      <View style={styles.modalInput}>
+                        <TextInput
+                          style={styles.modalTextInput}
+                          placeholder="Password"
+                          onChangeText={handleChange("password")}
+                          onBlur={handleBlur("password")}
+                          value={values.password}
+                        />
+                        <Text style={styles.errorText}>{touched.password && errors.password}</Text>
+                      </View>
+                      <View style={styles.modalAddButtonArea}>
+                        <Button title="Add" onPress={handleSubmit} />
+                      </View>
+                    </View>
+                  )}
+                </Formik>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </SafeAreaView>
       </Modal>
     );
   }
@@ -214,7 +238,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     width: Dimensions.get("window").width,
-    marginBottom: 10,
+    marginBottom: 60,
   },
   logo: {
     width: 100,
@@ -240,10 +264,16 @@ const styles = StyleSheet.create({
     elevation: 20,
     backgroundColor: "#605BDD",
     position: "absolute",
-    bottom: 10,
+    bottom: 60,
     right: 10,
     alignItems: "center",
     justifyContent: "center",
+  },
+  adBannerContainer: {
+    position: "absolute",
+    width: Dimensions.get("window").width,
+    bottom: 0,
+    alignItems: "center",
   },
   modalContainer: {
     backgroundColor: "white",
@@ -264,7 +294,8 @@ const styles = StyleSheet.create({
   modalTitle: {
     marginLeft: 10,
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 20,
+    lineHeight: 20,
   },
   modalInnerContainer: {
     flex: 1,

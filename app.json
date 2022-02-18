@@ -18,12 +18,18 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rips7.password-manager"
+      "bundleIdentifier": "com.rips7.password-manager",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-8647038202432785~4073264342"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-8647038202432785~4963017645"
       }
     },
     "web": {

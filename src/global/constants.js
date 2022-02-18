@@ -16,3 +16,10 @@ export const IMAGES = {
     masterPasswordBg: require(`${assetDir}master-password-bg.jpg`),
     logo: require(`${assetDir}logo.png`),
 }
+
+export const ADMOB = {
+    androidBannerId: "ca-app-pub-8647038202432785/2582937329",
+    androidTestBannerId: "ca-app-pub-3940256099942544/6300978111",
+    iosBannerId: "ca-app-pub-8647038202432785/5564323887",
+    iosTestBannerId: "ca-app-pub-3940256099942544/2934735716"
+}
