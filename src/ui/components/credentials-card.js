@@ -1,8 +1,10 @@
-import React, { Component, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { Component } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Card, Icon } from "react-native-elements";
 import { decrypt } from "../../crypto/crypto";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import * as Clipboard from "expo-clipboard";
+import Toast from "react-native-toast-message";
 
 class CredentialsCard extends Component {
   constructor({ domain, username, password, passkey }) {
@@ -38,9 +40,20 @@ class CredentialsCard extends Component {
         <Card.Title>{this.domain}</Card.Title>
         <Card.Divider color="#605BDD" />
         <View style={styles.row}>
-          <Text style={this.state.isUsernameInvisible ? styles.invisibleText : styles.visibleText}>
-            {this.state.isUsernameInvisible ? new Array(10).fill("*").join("") : decrypt(this.username, this.passkey)}
-          </Text>
+          <TouchableOpacity
+            onLongPress={() => {
+              Clipboard.setString(decrypt(this.username, this.passkey));
+              Toast.show({
+                type: "success",
+                text1: "Copied username.",
+                visibilityTime: 1500,
+              });
+            }}
+          >
+            <Text style={this.state.isUsernameInvisible ? styles.invisibleText : styles.visibleText}>
+              {this.state.isUsernameInvisible ? new Array(10).fill("*").join("") : decrypt(this.username, this.passkey)}
+            </Text>
+          </TouchableOpacity>
           {this.state.isUsernameInvisible ? (
             <Icon name="eye" type="ionicon" onPress={() => this.toggleCredentialsVisibility("username")} />
           ) : (
@@ -50,9 +63,20 @@ class CredentialsCard extends Component {
           )}
         </View>
         <View style={styles.row}>
-          <Text style={this.state.isPasswordInvisible ? styles.invisibleText : styles.visibleText}>
-            {this.state.isPasswordInvisible ? new Array(10).fill("*").join("") : decrypt(this.password, this.passkey)}
-          </Text>
+          <TouchableOpacity
+            onLongPress={() => {
+              Clipboard.setString(decrypt(this.password, this.passkey));
+              Toast.show({
+                type: "success",
+                text1: "Copied password.",
+                visibilityTime: 1500,
+              });
+            }}
+          >
+            <Text style={this.state.isPasswordInvisible ? styles.invisibleText : styles.visibleText}>
+              {this.state.isPasswordInvisible ? new Array(10).fill("*").join("") : decrypt(this.password, this.passkey)}
+            </Text>
+          </TouchableOpacity>
           {this.state.isPasswordInvisible ? (
             <Icon name="eye" type="ionicon" onPress={() => this.toggleCredentialsVisibility("password", true)} />
           ) : (
