@@ -1,6 +1,7 @@
 import { Formik } from "formik";
 import React, { Component } from "react";
 import {
+  Alert,
   Button,
   Dimensions,
   FlatList,
@@ -21,7 +22,7 @@ import Toast from "react-native-toast-message";
 import { AdMobBanner, setTestDeviceIDAsync } from "expo-ads-admob";
 import * as yup from "yup";
 import { encrypt } from "../../crypto/crypto";
-import { loadAllCredentials, storeCredentials } from "../../database/database-helper";
+import { loadAllCredentials, deleteCredentials, storeCredentials } from "../../database/database-helper";
 import { ADMOB, IMAGES } from "../../global/constants";
 import CredentialsCard from "../components/credentials-card";
 import * as Device from "expo-device";
@@ -53,6 +54,7 @@ class HomeScreen extends Component {
     this.state = {
       credentials: [],
       modalVisible: false,
+      modalPasswordVisible: false,
     };
 
     setTestDeviceIDAsync("EMULATOR");
@@ -96,10 +98,53 @@ class HomeScreen extends Component {
     });
   }
 
+  removeCredentials(key) {
+    deleteCredentials(key, (err, res) => {
+      if (!err) {
+        Toast.show({
+          type: "success",
+          text1: "Credentials deleted successfully.",
+        });
+        loadAllCredentials((err2, res2) => {
+          if (!err2) {
+            this.setState({ credentials: JSON.parse(res2) });
+          }
+        });
+      }
+    });
+  }
+
   // Renders a set of credentials as
   // an individual credentials card
-  renderCredentialsCard({ domain, username, password }) {
-    return <CredentialsCard domain={domain} username={username} password={password} passkey={this.passkey} />;
+  renderCredentialsCard({ key, domain, username, password }) {
+    return (
+      <CredentialsCard
+        domain={domain}
+        username={username}
+        password={password}
+        passkey={this.passkey}
+        onDelete={() =>
+          Alert.alert(
+            "Confirm Deletion",
+            "Are you sure you want to delete the credentials for " + domain + "?",
+            [
+              {
+                text: "Yes",
+                onPress: () => this.removeCredentials(key),
+                style: "default",
+              },
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          )
+        }
+      />
+    );
   }
 
   // Renders the main view
@@ -108,7 +153,7 @@ class HomeScreen extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
           <View style={styles.containerInner}>
-            <Image source={IMAGES.logo} resizeMode="contain" style={styles.logo} />
+            <Image source={IMAGES.logoHorizontal} resizeMode="contain" style={styles.logo} />
             {this.state.credentials.length === 0 ? (
               <View style={styles.emptyMessageContainer}>
                 <Text style={styles.emptyMessage}>
@@ -131,11 +176,7 @@ class HomeScreen extends Component {
           <Icon name="plus" type="font-awesome-5" color="white" />
         </TouchableOpacity>
         <View style={styles.adBannerContainer}>
-          <AdMobBanner
-            bannerSize="banner"
-            adUnitID={this.bannerId}
-            servePersonalizedAds={false}
-          />
+          <AdMobBanner bannerSize="banner" adUnitID={this.bannerId} servePersonalizedAds={false} />
         </View>
         {this.renderModal()}
       </SafeAreaView>
@@ -157,7 +198,7 @@ class HomeScreen extends Component {
     return (
       <Modal animationType="slide" transparent={true} visible={this.state.modalVisible}>
         <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> */}
             <View style={styles.modalContainer}>
               <View style={styles.modalTitleContainer}>
                 <TouchableOpacity style={styles.modalBackButton} onPress={this.toggleModal}>
@@ -203,13 +244,29 @@ class HomeScreen extends Component {
                         <Text style={styles.errorText}>{touched.username && errors.username}</Text>
                       </View>
                       <View style={styles.modalInput}>
-                        <TextInput
-                          style={styles.modalTextInput}
-                          placeholder="Password"
-                          onChangeText={handleChange("password")}
-                          onBlur={handleBlur("password")}
-                          value={values.password}
-                        />
+                        <View style={styles.modalPasswordContainer}>
+                          <TextInput
+                            style={styles.modalPasswordInput}
+                            secureTextEntry={!this.state.modalPasswordVisible}
+                            autoCorrect={false}
+                            autoComplete={false}
+                            autoCapitalize="none"
+                            placeholder="Password"
+                            onChangeText={handleChange("password")}
+                            onBlur={handleBlur("password")}
+                            value={values.password}
+                          />
+                          <TouchableOpacity
+                            onPress={() => {
+                              this.setState((prevState) => ({
+                                ...prevState,
+                                modalPasswordVisible: !prevState.modalPasswordVisible,
+                              }));
+                            }}
+                          >
+                            <Icon name="eye" type="ionicon" size={14} />
+                          </TouchableOpacity>
+                        </View>
                         <Text style={styles.errorText}>{touched.password && errors.password}</Text>
                       </View>
                       <View style={styles.modalAddButtonArea}>
@@ -220,7 +277,7 @@ class HomeScreen extends Component {
                 </Formik>
               </View>
             </View>
-          </TouchableWithoutFeedback>
+          {/* </TouchableWithoutFeedback> */}
         </SafeAreaView>
       </Modal>
     );
@@ -241,10 +298,10 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 50,
+    marginTop: 20,
     alignSelf: "center",
-    marginTop: 30,
   },
   emptyMessageContainer: {
     flex: 1,
@@ -310,6 +367,14 @@ const styles = StyleSheet.create({
   modalTextInput: {
     borderBottomColor: "grey",
     borderBottomWidth: 1,
+  },
+  modalPasswordContainer: {
+    flexDirection: "row",
+    borderBottomColor: "grey",
+    borderBottomWidth: 1,
+  },
+  modalPasswordInput: {
+    flex: 1,
   },
   modalAddButtonArea: {
     flex: 1,

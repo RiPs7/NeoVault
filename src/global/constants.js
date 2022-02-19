@@ -8,13 +8,14 @@ export const PASSCODE_LENGTH = 5;
 const assetDir = "../../assets/";
 
 export const IMAGES = {
-    passwordManagerIcon: require(`${assetDir}password-manager-icon.png`),
-    passwordManagerBg: require(`${assetDir}password-manager-bg.jpg`),
-    strongEncryptionIcon: require(`${assetDir}strong-encryption-icon.png`),
-    strongEncryptionBg: require(`${assetDir}strong-encryption-bg.jpg`),
-    masterPasswordIcon: require(`${assetDir}master-password-icon.png`),
-    masterPasswordBg: require(`${assetDir}master-password-bg.jpg`),
-    logo: require(`${assetDir}logo.png`),
+    logoHorizontal: require(`${assetDir}logo-horizontal.png`),
+    logoVertical: require(`${assetDir}logo-vertical.png`),
+    passwordManagerBg: require(`${assetDir}background-password-manager.jpg`),
+    strongEncryptionBg: require(`${assetDir}background-strong-encryption.jpg`),
+    masterPasswordBg: require(`${assetDir}background-master-password.jpg`),
+    passwordManagerIcon: require(`${assetDir}icon-password-manager.png`),
+    strongEncryptionIcon: require(`${assetDir}icon-strong-encryption.png`),
+    masterPasswordIcon: require(`${assetDir}icon-master-password.png`),
 }
 
 export const ADMOB = {

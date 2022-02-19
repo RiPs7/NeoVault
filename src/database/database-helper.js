@@ -20,7 +20,7 @@ export const storeCredentials = (domain, username, password, cb) => {
       const newCredentials = [
         ...oldCredentials,
         {
-          key: oldCredentials.length,
+          key: Math.max(...oldCredentials.map(cred => cred.key)) + 1,
           domain: domain,
           username: username,
           password: password,
@@ -32,3 +32,13 @@ export const storeCredentials = (domain, username, password, cb) => {
     }
   });
 };
+
+export const deleteCredentials = (key, cb) => {
+  AsyncStorage.getItem(CREDENTIALS_KEY, (err, res) => {
+    if (!err) {
+      const oldCredentials = res ? JSON.parse(res) : [];
+      const newCredentials = oldCredentials.filter(creds => creds.key !== key);
+      AsyncStorage.setItem(CREDENTIALS_KEY, JSON.stringify(newCredentials), cb);
+    }
+  });
+}

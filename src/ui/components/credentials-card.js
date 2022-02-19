@@ -7,12 +7,13 @@ import * as Clipboard from "expo-clipboard";
 import Toast from "react-native-toast-message";
 
 class CredentialsCard extends Component {
-  constructor({ domain, username, password, passkey }) {
+  constructor({ domain, username, password, passkey, onDelete }) {
     super();
     this.domain = domain;
     this.username = username;
     this.password = password;
     this.passkey = passkey;
+    this.onDelete = onDelete;
     this.timerProps = {
       isPlaying: true,
       duration: 3,
@@ -37,7 +38,12 @@ class CredentialsCard extends Component {
   render() {
     return (
       <Card containerStyle={styles.cardContainer}>
-        <Card.Title>{this.domain}</Card.Title>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Card.Title>{this.domain}</Card.Title>
+          <TouchableOpacity style={{ marginRight: 5 }} onPress={this.onDelete}>
+            <Icon name="delete" color="red" />
+          </TouchableOpacity>
+        </View>
         <Card.Divider color="#605BDD" />
         <View style={styles.row}>
           <TouchableOpacity
