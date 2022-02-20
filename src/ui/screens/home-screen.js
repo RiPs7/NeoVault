@@ -88,6 +88,7 @@ class HomeScreen extends Component {
         Toast.show({
           type: "success",
           text1: "Credentials stored securely.",
+          visibilityTime: 1500,
         });
         loadAllCredentials((err2, res2) => {
           if (!err2) {
@@ -104,6 +105,7 @@ class HomeScreen extends Component {
         Toast.show({
           type: "success",
           text1: "Credentials deleted successfully.",
+          visibilityTime: 1500,
         });
         loadAllCredentials((err2, res2) => {
           if (!err2) {
@@ -198,7 +200,7 @@ class HomeScreen extends Component {
     return (
       <Modal animationType="slide" transparent={true} visible={this.state.modalVisible}>
         <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
-          {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> */}
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={styles.modalContainer}>
               <View style={styles.modalTitleContainer}>
                 <TouchableOpacity style={styles.modalBackButton} onPress={this.toggleModal}>
@@ -236,6 +238,9 @@ class HomeScreen extends Component {
                       <View style={styles.modalInput}>
                         <TextInput
                           style={styles.modalTextInput}
+                          autoCorrect={false}
+                          autoComplete={false}
+                          autoCapitalize="none"
                           placeholder="Username"
                           onChangeText={handleChange("username")}
                           onBlur={handleBlur("username")}
@@ -277,7 +282,7 @@ class HomeScreen extends Component {
                 </Formik>
               </View>
             </View>
-          {/* </TouchableWithoutFeedback> */}
+          </TouchableWithoutFeedback>
         </SafeAreaView>
       </Modal>
     );

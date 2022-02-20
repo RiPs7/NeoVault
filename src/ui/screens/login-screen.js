@@ -26,6 +26,7 @@ class LoginScreen extends Component {
               type: "success",
               text1: "Passcode stored securely.",
               text2: "Welcome to your Password Manager 👋",
+              visibilityTime: 2000,
             });
             this.props.navigation.replace("HomeScreen", { passkey: passkey });
           }
