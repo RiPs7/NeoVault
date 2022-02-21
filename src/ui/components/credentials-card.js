@@ -1,10 +1,10 @@
+import * as Clipboard from "expo-clipboard";
 import React, { Component } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Card, Icon } from "react-native-elements";
-import { decrypt } from "../../crypto/crypto";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import * as Clipboard from "expo-clipboard";
+import { Card, Icon } from "react-native-elements";
 import Toast from "react-native-toast-message";
+import { decrypt } from "../../crypto/crypto";
 
 class CredentialsCard extends Component {
   constructor({ domain, username, password, passkey, onDelete }) {

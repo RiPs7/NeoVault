@@ -1,3 +1,5 @@
+import { AdMobBanner } from "expo-ads-admob";
+import * as Device from "expo-device";
 import { Formik } from "formik";
 import React, { Component } from "react";
 import {
@@ -15,17 +17,15 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { Icon } from "react-native-elements";
 import Toast from "react-native-toast-message";
-import { AdMobBanner, setTestDeviceIDAsync } from "expo-ads-admob";
 import * as yup from "yup";
 import { encrypt } from "../../crypto/crypto";
-import { loadAllCredentials, deleteCredentials, storeCredentials } from "../../database/database-helper";
+import { deleteCredentials, loadAllCredentials, storeCredentials } from "../../database/database-helper";
 import { ADMOB, IMAGES } from "../../global/constants";
 import CredentialsCard from "../components/credentials-card";
-import * as Device from "expo-device";
 
 const addCredentialsSchema = yup.object({
   domain: yup
@@ -56,8 +56,6 @@ class HomeScreen extends Component {
       modalVisible: false,
       modalPasswordVisible: false,
     };
-
-    setTestDeviceIDAsync("EMULATOR");
 
     // The banner ID based on the Platform
     const testID = Platform.OS === "ios" ? ADMOB.iosTestBannerId : ADMOB.androidTestBannerId;

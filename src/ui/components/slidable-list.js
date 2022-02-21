@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { IMAGES } from "../../global/constants";
 import CustomButton from "./custom-button";

@@ -38,7 +38,7 @@ class LoginScreen extends Component {
               Toast.show({
                 type: "success",
                 text1: "Logged in successfully",
-                visibilityTime: 1500
+                visibilityTime: 1500,
               });
               this.props.navigation.replace("HomeScreen", { passkey: passkey });
             } else {

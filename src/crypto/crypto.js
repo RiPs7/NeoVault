@@ -21,7 +21,7 @@ const decrypt = (text, seed) => {
 
 const sha256 = (text) => {
   return CryptoES.SHA256(text).toString();
-}
+};
 
 const salt = "RiPs7-P@$$w0rD-M@n@geR";
 const iv = CryptoES.enc.Utf8.parse(sha256(Device.osBuildFingerprint));

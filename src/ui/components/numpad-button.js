@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     ...Platform.select({
       ios: {
-        lineHeight: 75
+        lineHeight: 75,
       },
       android: {
-        textAlignVertical: "center"
+        textAlignVertical: "center",
       },
     }),
   },

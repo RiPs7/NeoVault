@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
-import { sha256 } from "../../crypto/crypto";
 import { PASSCODE_LENGTH } from "../../global/constants";
 
 class Passcode extends Component {
@@ -13,7 +12,7 @@ class Passcode extends Component {
   }
 
   // Adds a digit to the passcode.
-  // If the required length is reached, it calls onSubmit, 
+  // If the required length is reached, it calls onSubmit,
   // passing back the current passcode and a callback for error.
   // The consumer is responsible to invoke the error callback.
   addDigit(digit, onSubmit) {
@@ -23,7 +22,7 @@ class Passcode extends Component {
       onSubmit(currentPasscode.join(""), () => {
         this.clearDigits();
         this.shakePasscode();
-      })
+      });
     }
   }
 

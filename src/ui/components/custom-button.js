@@ -1,6 +1,6 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { Component } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 
 class CustomButton extends Component {
   constructor(props) {
