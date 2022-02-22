@@ -1,34 +1,73 @@
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Icon } from "react-native-elements";
 import NumpadButton from "./numpad-button";
+import { 
+  hasHardwareAsync,
+  isEnrolledAsync,
+  authenticateAsync 
+} from 'expo-local-authentication';
 
 class Numpad extends Component {
   constructor(props) {
     super(props);
+
+    this.forSetup = props.forSetup;
+
+    this.state = {
+      fingerprints: false
+    };
+  }
+
+  async componentDidMount() {
+    const compatible = await hasHardwareAsync();
+    if (!compatible) {
+      console.warn("Device not compatible with biometrics");
+      return;
+    }
+    const enrolled = await isEnrolledAsync();
+    if (!enrolled) {
+      console.warn("No biometrics are enrolled");
+      return;
+    }
+    this.setState({
+      fingerprints: true
+    })
+  }
+
+  async useBiomatrics() {
+    const result = await authenticateAsync();
+    if (result?.success) {
+      this.props.onBiomatricsSuccess();
+    }
   }
 
   render() {
     return (
       <View style={styles.container}>
+        {new Array(3).fill(0).map((_, row) => (
+          <View key={row} style={styles.row}>
+            {new Array(3).fill(0).map((_, col) => {
+              const value = 3 * row + col + 1;
+              return <NumpadButton key={value} value={value} onButtonPressed={(btn) => this.onDigitPressed(btn)} />;
+            })}
+          </View>
+        ))}
         <View style={styles.row}>
-          <NumpadButton value="1" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-          <NumpadButton value="2" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-          <NumpadButton value="3" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-        </View>
-        <View style={styles.row}>
-          <NumpadButton value="4" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-          <NumpadButton value="5" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-          <NumpadButton value="6" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-        </View>
-        <View style={styles.row}>
-          <NumpadButton value="7" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-          <NumpadButton value="8" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-          <NumpadButton value="9" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-        </View>
-        <View style={styles.row}>
-          <View style={{ width: 75, height: 75 }}></View>
-          <NumpadButton value="0" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
-          <NumpadButton value="C" onButtonPressed={() => this.onClearPressed()}></NumpadButton>
+          {this.forSetup || !this.state.fingerprints ? (
+            <View style={{ width: 75, height: 75 }} />
+          ) : (
+            <View style={styles.fingerprintContainer}>
+              <TouchableOpacity
+                style={styles.fingerprint}
+                onPress={() => this.useBiomatrics()}
+              >
+                <Icon name="fingerprint" type="material" color="dodgerblue" size={40} />
+              </TouchableOpacity>
+            </View>
+          )}
+          <NumpadButton key="0" value="0" onButtonPressed={(btn) => this.onDigitPressed(btn)}></NumpadButton>
+          <NumpadButton key="C" value="C" onButtonPressed={() => this.onClearPressed()}></NumpadButton>
         </View>
       </View>
     );
@@ -53,6 +92,26 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  fingerprintContainer: {
+    borderColor: "dodgerblue",
+    borderWidth: 1,
+    borderRadius: 75,
+    width: 75,
+    height: 75,
+  },
+  fingerprint: {
+    flex: 1,
+    textAlign: "center",
+    justifyContent: "center",
+    ...Platform.select({
+      ios: {
+        lineHeight: 75,
+      },
+      android: {
+        textAlignVertical: "center",
+      },
+    }),
   },
 });
 

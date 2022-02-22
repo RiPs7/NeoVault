@@ -34,7 +34,8 @@
     "react-native-toast-message": "^2.1.1",
     "react-native-web": "0.17.1",
     "yup": "^0.32.11",
-    "expo-clipboard": "~2.1.0"
+    "expo-clipboard": "~2.1.0",
+    "expo-local-authentication": "~12.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

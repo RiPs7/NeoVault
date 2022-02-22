@@ -26,7 +26,7 @@ class LoginScreen extends Component {
               type: "success",
               text1: "Passcode stored securely.",
               text2: "Welcome to your Password Manager 👋",
-              visibilityTime: 2000,
+              visibilityTime: 3000,
             });
             this.props.navigation.replace("HomeScreen", { passkey: passkey });
           }
@@ -54,13 +54,28 @@ class LoginScreen extends Component {
     this.passcode.current.clearDigits();
   }
 
+  handleBiometricsSuccess() {
+    loadPasskey((err, res) => {
+      if (!err && res) {
+        Toast.show({
+          type: "success",
+          text1: "Logged in successfully",
+          visibilityTime: 1500,
+        });
+        this.props.navigation.replace("HomeScreen", { passkey: res });
+      }
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Passcode ref={this.passcode}></Passcode>
         <Numpad
+          forSetup={this.forSetup}
           onDigitPressed={(digit) => this.handleDigitPressed(digit)}
           onClearPressed={() => this.handleClearPressed()}
+          onBiomatricsSuccess={() => this.handleBiometricsSuccess()}
         ></Numpad>
       </View>
     );
