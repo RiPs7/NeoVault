@@ -1,21 +1,18 @@
 import React, { Component } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, LogBox } from "react-native";
 import { Icon } from "react-native-elements";
 import NumpadButton from "./numpad-button";
-import { 
-  hasHardwareAsync,
-  isEnrolledAsync,
-  authenticateAsync 
-} from 'expo-local-authentication';
+import { hasHardwareAsync, isEnrolledAsync, authenticateAsync } from "expo-local-authentication";
 
 class Numpad extends Component {
   constructor(props) {
     super(props);
+    LogBox.ignoreLogs(["Warning: ..."]);
 
     this.forSetup = props.forSetup;
 
     this.state = {
-      fingerprints: false
+      fingerprints: false,
     };
   }
 
@@ -31,14 +28,18 @@ class Numpad extends Component {
       return;
     }
     this.setState({
-      fingerprints: true
-    })
+      fingerprints: true,
+    });
   }
 
-  async useBiomatrics() {
-    const result = await authenticateAsync();
+  async initBiometrics() {
+    const result = await authenticateAsync({
+      disableDeviceFallback: true,
+      cancelLabel: "Cancel",
+      ...(Platform.OS === "ios" && { fallbackLabel: "" }),
+    });
     if (result?.success) {
-      this.props.onBiomatricsSuccess();
+      this.props.onBiometricsSuccess();
     }
   }
 
@@ -58,10 +59,7 @@ class Numpad extends Component {
             <View style={{ width: 75, height: 75 }} />
           ) : (
             <View style={styles.fingerprintContainer}>
-              <TouchableOpacity
-                style={styles.fingerprint}
-                onPress={() => this.useBiomatrics()}
-              >
+              <TouchableOpacity style={styles.fingerprint} onPress={() => this.initBiometrics()}>
                 <Icon name="fingerprint" type="material" color="dodgerblue" size={40} />
               </TouchableOpacity>
             </View>

@@ -75,7 +75,7 @@ class LoginScreen extends Component {
           forSetup={this.forSetup}
           onDigitPressed={(digit) => this.handleDigitPressed(digit)}
           onClearPressed={() => this.handleClearPressed()}
-          onBiomatricsSuccess={() => this.handleBiometricsSuccess()}
+          onBiometricsSuccess={() => this.handleBiometricsSuccess()}
         ></Numpad>
       </View>
     );
