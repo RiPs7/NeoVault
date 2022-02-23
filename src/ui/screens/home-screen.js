@@ -251,6 +251,7 @@ class HomeScreen extends Component {
                           <TextInput
                             style={styles.modalPasswordInput}
                             secureTextEntry={!this.state.modalPasswordVisible}
+                            textContentType="none"
                             autoCorrect={false}
                             autoComplete={false}
                             autoCapitalize="none"
