@@ -1,11 +1,12 @@
 import * as Device from "expo-device";
 import React, { Component, createRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { sha256 } from "../../crypto/crypto";
 import { loadPasskey, storePasskey } from "../../database/database-helper";
 import Numpad from "../components/numpad";
 import Passcode from "../components/passcode";
+import { IMAGES } from "../../global/constants";
 
 class LoginScreen extends Component {
   constructor(props) {
@@ -70,6 +71,7 @@ class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <Image source={IMAGES.logoVertical} resizeMode="contain" style={styles.logo} />
         <Passcode ref={this.passcode}></Passcode>
         <Numpad
           forSetup={this.forSetup}
@@ -87,7 +89,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
+  },
+  logo: {
+    height: 70,
+    alignSelf: "center",
   },
 });
 
