@@ -5,6 +5,7 @@ import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { Card, Icon } from "react-native-elements";
 import Toast from "react-native-toast-message";
 import { decrypt } from "../../crypto/crypto";
+import { COLOURS } from "../../global/constants";
 
 class CredentialsCard extends Component {
   constructor({ domain, username, password, passkey, onDelete }) {
@@ -17,7 +18,7 @@ class CredentialsCard extends Component {
     this.timerProps = {
       isPlaying: true,
       duration: 3,
-      colors: ["#605BDD", "#605BDD", "#A30000", "#A30000"],
+      colors: [COLOURS.DARK_PERIWINKLE, COLOURS.DARK_PERIWINKLE, COLOURS.CRIMSON_RED, COLOURS.CRIMSON_RED],
       colorsTime: [3, 2, 1, 0],
       size: 26,
       strokeWidth: 5,
@@ -44,7 +45,7 @@ class CredentialsCard extends Component {
             <Icon name="delete" color="red" />
           </TouchableOpacity>
         </View>
-        <Card.Divider color="#605BDD" />
+        <Card.Divider color={COLOURS.DARK_PERIWINKLE} />
         <View style={styles.row}>
           <TouchableOpacity
             onLongPress={() => {
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 70,
     elevation: 0,
     borderRadius: 20,
-    borderColor: "#605BDD",
+    borderColor: COLOURS.DARK_PERIWINKLE,
     borderStyle: "dashed",
     backgroundColor: "transparent",
   },
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   visibleText: {
-    color: "#202020",
+    color: COLOURS.DARK_JUNGLE_GREEN,
     fontWeight: "bold",
     fontSize: 14,
   },

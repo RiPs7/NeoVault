@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     paddingBottom: "10%",
   },
   subtitle: {
-    color: "#FFFFFF",
+    color: "white",
     textAlign: "center",
     fontSize: 17,
     flexWrap: "wrap",
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     paddingBottom: "10%",
   },
   catchPhrase: {
-    color: "#FFFFFF",
+    color: "white",
     textAlign: "center",
     fontSize: 25,
     flexWrap: "wrap",
@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
   transitionBackground: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#5050BB",
   },
   paginationContainer: {
     flex: 0.1,

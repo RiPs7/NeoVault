@@ -18,6 +18,16 @@ export const IMAGES = {
   masterPasswordIcon: require(`${assetDir}icon-master-password.png`),
 };
 
+export const COLOURS = {
+  DARK_PERIWINKLE: "#605BDD",
+  CRIMSON_RED: "#A30000",
+  DARK_JUNGLE_GREEN: "#202020",
+  VALENTINE_RED: "#F05050",
+  GALLERY: "#EFEFEF",
+  DUSTY_GREY: "#999999",
+  LINEAR_GRADIENT: ["#4C669F", "#3B5998", "#192F6A"],
+};
+
 export const ADMOB = {
   androidBannerId: "ca-app-pub-8647038202432785/2582937329",
   androidTestBannerId: "ca-app-pub-3940256099942544/6300978111",

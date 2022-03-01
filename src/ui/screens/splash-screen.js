@@ -10,7 +10,7 @@ class SplashScreen extends Component {
   constructor(props) {
     super(props);
     // Uncomment the line below to clear all the setup and start from scratch
-    // AsyncStorage.clear();
+    AsyncStorage.clear();
   }
 
   componentDidMount() {

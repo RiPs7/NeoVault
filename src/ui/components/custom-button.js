@@ -1,6 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { Component } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { COLOURS } from "../../global/constants";
 
 class CustomButton extends Component {
   constructor(props) {
@@ -9,7 +10,7 @@ class CustomButton extends Component {
 
   render() {
     return (
-      <LinearGradient colors={["#4c669f", "#3b5998", "#192f6a"]} style={styles.linearGradient}>
+      <LinearGradient colors={COLOURS.LINEAR_GRADIENT} style={styles.linearGradient}>
         <TouchableOpacity style={styles.button} onPress={() => this.props.onPress()}>
           <Text style={styles.buttonText}>{this.props.value}</Text>
         </TouchableOpacity>
@@ -35,6 +36,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     color: "#ffffff",
+    ...Platform.select({
+      ios: {
+        lineHeight: 50,
+      },
+      android: {
+        textAlignVertical: "center",
+      },
+    }),
   },
 });
 

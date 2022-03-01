@@ -24,7 +24,7 @@ import Toast from "react-native-toast-message";
 import * as yup from "yup";
 import { encrypt } from "../../crypto/crypto";
 import { deleteCredentials, loadAllCredentials, storeCredentials } from "../../database/database-helper";
-import { ADMOB, IMAGES } from "../../global/constants";
+import { ADMOB, COLOURS, IMAGES } from "../../global/constants";
 import CredentialsCard from "../components/credentials-card";
 
 const addCredentialsSchema = yup.object({
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   },
   emptyMessage: {
     fontSize: 30,
-    color: "#707070A0",
+    color: COLOURS.DUSTY_GREY,
     textAlign: "center",
   },
   actionButton: {
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     elevation: 20,
-    backgroundColor: "#605BDD",
+    backgroundColor: COLOURS.DARK_PERIWINKLE,
     position: "absolute",
     bottom: 60,
     right: 10,
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height,
   },
   modalTitleContainer: {
-    backgroundColor: "#EFEFEF",
+    backgroundColor: COLOURS.GALLERY,
     height: 50,
     elevation: 10,
     flexDirection: "row",
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   errorText: {
-    color: "#F05050",
+    color: COLOURS.VALENTINE_RED,
   },
 });
 
