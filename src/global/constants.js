@@ -1,7 +1,8 @@
 export const SPLASH_SCREEN_DELAY_MS = 3000;
 
 export const PASSKEY_KEY = "passkey";
-export const CREDENTIALS_KEY = "credentialskey";
+export const CREDENTIALS_KEY = "credentials";
+export const UNIQUE_ID_KEY = "uuid";
 
 export const PASSCODE_LENGTH = 5;
 

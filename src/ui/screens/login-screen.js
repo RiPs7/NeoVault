@@ -2,8 +2,9 @@ import * as Device from "expo-device";
 import React, { Component, createRef } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import Toast from "react-native-toast-message";
+import uuid from "react-native-uuid";
 import { sha256 } from "../../crypto/crypto";
-import { loadPasskey, storePasskey } from "../../database/database-helper";
+import { loadPasskey, loadUuid, storePasskey, storeUuid } from "../../database/database-helper";
 import Numpad from "../components/numpad";
 import Passcode from "../components/passcode";
 import { IMAGES } from "../../global/constants";
@@ -19,34 +20,44 @@ class LoginScreen extends Component {
 
   handleDigitPressed(digit) {
     this.passcode.current.addDigit(digit, (passcode, onError) => {
-      const passkey = sha256(passcode + Device.uniqueId);
       if (this.forSetup) {
-        storePasskey(passkey, (err) => {
+        const uuidV4 = uuid.v4();
+        storeUuid(uuidV4, (err) => {
           if (!err) {
-            Toast.show({
-              type: "success",
-              text1: "Passcode stored securely.",
-              text2: "Welcome to your Password Manager 👋",
-              visibilityTime: 3000,
+            const passkey = sha256(passcode + uuidV4);
+            storePasskey(passkey, (err2) => {
+              if (!err2) {
+                Toast.show({
+                  type: "success",
+                  text1: "Passcode stored securely.",
+                  text2: "Welcome to your Password Manager 👋",
+                  visibilityTime: 3000,
+                });
+                this.props.navigation.replace("HomeScreen", { passkey: passkey });
+              }
             });
-            this.props.navigation.replace("HomeScreen", { passkey: passkey });
           }
         });
       } else {
-        loadPasskey((err, res) => {
+        loadUuid((err, res) => {
           if (!err && res) {
-            if (passkey === res) {
-              Toast.show({
-                type: "success",
-                text1: "Logged in successfully",
-                visibilityTime: 1500,
-              });
-              this.props.navigation.replace("HomeScreen", { passkey: passkey });
-            } else {
-              onError();
-            }
+            const passkey = sha256(passcode + res);
+            loadPasskey((err2, res2) => {
+              if (!err2 && res2) {
+                if (passkey === res2) {
+                  Toast.show({
+                    type: "success",
+                    text1: "Logged in successfully",
+                    visibilityTime: 1500,
+                  });
+                  this.props.navigation.replace("HomeScreen", { passkey: passkey });
+                } else {
+                  onError();
+                }
+              }
+            });
           }
-        });
+        })
       }
     });
   }

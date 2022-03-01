@@ -1,5 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { CREDENTIALS_KEY, PASSKEY_KEY } from "../global/constants";
+import { CREDENTIALS_KEY, PASSKEY_KEY, UNIQUE_ID_KEY } from "../global/constants";
+
+export const storeUuid = (uuid, cb) => {
+  AsyncStorage.setItem(UNIQUE_ID_KEY, uuid, cb);
+}
+
+export const loadUuid = (cb) => {
+  AsyncStorage.getItem(UNIQUE_ID_KEY, cb);
+}
 
 export const storePasskey = (passkey, cb) => {
   AsyncStorage.setItem(PASSKEY_KEY, passkey, cb);
