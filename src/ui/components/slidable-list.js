@@ -125,7 +125,7 @@ class SlidableList extends Component {
     } else {
       return (
         <View style={styles.buttonContainer}>
-          <CustomButton value="Let's start" onPress={() => this.props.onFinish()}></CustomButton>
+          <CustomButton value="Let's start" onPress={() => this.props.onFinish()} />
           <TouchableOpacity>
             <Text style={styles.importText}>or import existing data</Text>
           </TouchableOpacity>

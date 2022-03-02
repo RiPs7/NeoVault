@@ -6,7 +6,7 @@ import LoginScreen from "./src/ui/screens/login-screen";
 import SetupScreen from "./src/ui/screens/setup-screen";
 import SplashScreen from "./src/ui/screens/splash-screen";
 import Toast from "react-native-toast-message";
-import { StatusBar } from "react-native";
+import { SafeAreaView } from "react-native";
 
 class App extends Component {
   constructor() {
@@ -16,8 +16,7 @@ class App extends Component {
   render() {
     const Stack = createStackNavigator();
     return (
-      <>
-        <StatusBar hidden />
+      <SafeAreaView style={{ flex: 1 }}>
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
@@ -27,7 +26,7 @@ class App extends Component {
           </Stack.Navigator>
         </NavigationContainer>
         <Toast />
-      </>
+      </SafeAreaView>
     );
   }
 }
