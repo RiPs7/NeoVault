@@ -1,4 +1,3 @@
-import * as Device from "expo-device";
 import React, { Component, createRef } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import Toast from "react-native-toast-message";

@@ -17,6 +17,9 @@ class Numpad extends Component {
   }
 
   async componentDidMount() {
+    if (this.forSetup) {
+      return;
+    }
     const compatible = await hasHardwareAsync();
     if (!compatible) {
       console.warn("Device not compatible with biometrics");

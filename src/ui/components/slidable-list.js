@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { IMAGES } from "../../global/constants";
 import CustomButton from "./custom-button";
@@ -124,8 +124,11 @@ class SlidableList extends Component {
       );
     } else {
       return (
-        <View style={styles.paginationContainer}>
+        <View style={styles.buttonContainer}>
           <CustomButton value="Let's start" onPress={() => this.props.onFinish()}></CustomButton>
+          <TouchableOpacity>
+            <Text style={styles.importText}>or import existing data</Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -133,9 +136,7 @@ class SlidableList extends Component {
 
   handleMomentumScrollEnd = ({ nativeEvent }) => {
     const offset = nativeEvent.contentOffset.x;
-
     const newIndex = Math.round(offset / this.state.width);
-
     if (newIndex === this.state.activeIndex) {
       return;
     }
@@ -225,6 +226,19 @@ const styles = StyleSheet.create({
   },
   dotStyle: {
     backgroundColor: "rgba(0, 0, 0, 0.2)",
+  },
+  buttonContainer: {
+    flex: 0.2,
+    justifyContent: "center",
+    alignContent: "center",
+    bottom: 50,
+  },
+  importText: {
+    alignSelf: "center",
+    marginTop: 25,
+    fontSize: 20,
+    textDecorationLine: "underline",
+    color: "white",
   },
 });
 

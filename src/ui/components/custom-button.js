@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { Component } from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { COLOURS } from "../../global/constants";
 
 class CustomButton extends Component {
@@ -21,16 +21,17 @@ class CustomButton extends Component {
 
 const styles = StyleSheet.create({
   linearGradient: {
-    flex: 1,
-    height: 50,
+    height: 80,
+    marginHorizontal: 30,
     alignContent: "center",
+    borderRadius: 20,
   },
   button: {
     flex: 1,
   },
   buttonText: {
     flex: 1,
-    fontSize: 20,
+    fontSize: 30,
     padding: 15,
     textAlign: "center",
     justifyContent: "center",
