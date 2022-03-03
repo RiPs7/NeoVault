@@ -2,7 +2,13 @@ import React, { Component } from "react";
 import { StyleSheet, TouchableOpacity, View, LogBox } from "react-native";
 import { Icon } from "react-native-elements";
 import NumpadButton from "./numpad-button";
-import { hasHardwareAsync, isEnrolledAsync, authenticateAsync } from "expo-local-authentication";
+import {
+  hasHardwareAsync,
+  isEnrolledAsync,
+  authenticateAsync,
+  supportedAuthenticationTypesAsync,
+  AuthenticationType,
+} from "expo-local-authentication";
 
 class Numpad extends Component {
   constructor(props) {
@@ -28,6 +34,11 @@ class Numpad extends Component {
     const enrolled = await isEnrolledAsync();
     if (!enrolled) {
       console.warn("No biometrics are enrolled");
+      return;
+    }
+    const fingerprintsSuppoered = await supportedAuthenticationTypesAsync();
+    if (!fingerprintsSuppoered.includes(AuthenticationType.FINGERPRINT)) {
+      console.warn("Fingerprint is not supported");
       return;
     }
     this.setState({
