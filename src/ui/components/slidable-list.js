@@ -1,20 +1,7 @@
 import React, { Component, createRef } from "react";
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  ImageBackground,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { IMAGES } from "../../global/constants";
 import CustomButton from "./custom-button";
-
-const WIDTH = Dimensions.get("window").width;
-const HEIGHT = Dimensions.get("window").height;
 
 class SlidableList extends Component {
   constructor(props) {
@@ -22,8 +9,8 @@ class SlidableList extends Component {
     this.flatListRef = createRef();
 
     this.state = {
-      width: WIDTH,
-      height: HEIGHT,
+      width: Dimensions.get("window").width,
+      height: Dimensions.get("window").height,
       activeIndex: 0,
     };
 
@@ -78,8 +65,8 @@ class SlidableList extends Component {
 
   renderSlide = ({ item }) => {
     return (
-      <View style={{ width: this.state.width, flex: 1 }}>
-        <ImageBackground style={{ width: WIDTH, height: HEIGHT }} source={item.background} resizeMode="cover">
+      <View style={{ width: this.state.width, ...styles.slideContainer }}>
+        <ImageBackground style={styles.backgroundImage} source={item.background} resizeMode="cover">
           <View style={styles.slide}>
             <View style={styles.titleContainer}>
               <Text allowFontScaling={false} style={styles.title}>
@@ -108,18 +95,16 @@ class SlidableList extends Component {
     if (this.state.activeIndex !== this.slides.length - 1) {
       return (
         <View style={styles.paginationContainer}>
-          <SafeAreaView>
-            <View style={styles.paginationDots}>
-              {new Array(this.slides.length).fill(0).map((_, i) => (
-                <TouchableOpacity
-                  hitSlop={{ left: 15, right: 15, top: 15, bottom: 15 }}
-                  key={i}
-                  style={[styles.dot, i === this.state.activeIndex ? styles.activeDotStyle : styles.dotStyle]}
-                  onPress={this.goToSlide(i)}
-                />
-              ))}
-            </View>
-          </SafeAreaView>
+          <View style={styles.paginationDots}>
+            {new Array(this.slides.length).fill(0).map((_, i) => (
+              <TouchableOpacity
+                hitSlop={{ left: 15, right: 15, top: 15, bottom: 15 }}
+                key={i}
+                style={[styles.dot, i === this.state.activeIndex ? styles.activeDotStyle : styles.dotStyle]}
+                onPress={this.goToSlide(i)}
+              />
+            ))}
+          </View>
         </View>
       );
     } else {
@@ -146,26 +131,24 @@ class SlidableList extends Component {
 
 const styles = StyleSheet.create({
   flatList: {
-    flex: 0.9,
+    flex: 1,
     flexDirection: "row",
   },
+  slideContainer: {
+    flex: 1,
+  },
   backgroundImage: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
+    flex: 1,
   },
   slide: {
-    flex: 1,
+    flex: 0.7,
     alignItems: "center",
     flexDirection: "column",
     justifyContent: "space-evenly",
   },
   titleContainer: {
-    flexDirection: "row",
-    paddingTop: "10%",
     paddingHorizontal: 40,
     alignItems: "center",
-    paddingBottom: "10%",
   },
   title: {
     flexWrap: "wrap",
@@ -173,40 +156,36 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
-  subtitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 17,
-    paddingBottom: "10%",
-  },
-  subtitle: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 17,
-    flexWrap: "wrap",
-    flex: 1,
-  },
   catchPhraseContainer: {
-    flexDirection: "row",
+    paddingHorizontal: 20,
     alignItems: "center",
-    paddingHorizontal: 17,
-    paddingBottom: "10%",
   },
   catchPhrase: {
     color: "white",
     textAlign: "center",
     fontSize: 25,
     flexWrap: "wrap",
-    flex: 1,
+  },
+  subtitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  subtitle: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 17,
+    flexWrap: "wrap",
   },
   transitionBackground: {
     flex: 1,
     justifyContent: "center",
   },
   paginationContainer: {
-    flex: 0.1,
+    flex: 0.3,
     justifyContent: "center",
     alignContent: "center",
+    bottom: -50,
   },
   paginationDots: {
     height: 16,
@@ -228,10 +207,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.2)",
   },
   buttonContainer: {
-    flex: 0.2,
+    flex: 0.3,
     justifyContent: "center",
     alignContent: "center",
-    bottom: 50,
   },
   importText: {
     alignSelf: "center",
