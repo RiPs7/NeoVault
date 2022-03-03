@@ -1,12 +1,14 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { Component } from "react";
+import { LogBox, SafeAreaView } from "react-native";
+import Toast from "react-native-toast-message";
 import HomeScreen from "./src/ui/screens/home-screen";
 import LoginScreen from "./src/ui/screens/login-screen";
 import SetupScreen from "./src/ui/screens/setup-screen";
 import SplashScreen from "./src/ui/screens/splash-screen";
-import Toast from "react-native-toast-message";
-import { SafeAreaView } from "react-native";
+
+LogBox.ignoreAllLogs(true);
 
 class App extends Component {
   constructor() {
