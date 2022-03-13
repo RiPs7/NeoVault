@@ -1,4 +1,4 @@
-# Password Manager
+# Neo Vault
 
 This is a WIP app so that the user can set up a master passcode to gain access to
 their saved passwords.
