@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "password-manager",
-    "slug": "password-manager",
+    "name": "neo-vault",
+    "slug": "neo-vault",
     "version": "1.0.0",
     "orientation": "portrait",
     "updates": {
@@ -12,7 +12,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rips7.password-manager",
+      "bundleIdentifier": "com.rips7.neo-vault",
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-8647038202432785~4073264342"
       }
